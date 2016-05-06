@@ -20,13 +20,49 @@ div
 }
 
 
-.topnav
+.topnav a
 {
     color : yellow;
     font-size: 15px;
     float:left;
-    padding-top : 0.90%;
+    padding-top : 2%;
+    padding-bottom: 2%;
+}
+
+.topright a
+{
+    float:right;
+    color : yellow;
+    font-size: 15px;
+    padding-top : 2%;
     padding-bottom: 0.90%;
+}
+
+.topright a:hover
+{
+    color:green;
+    text-decoration: none;
+}
+
+.topnav a:hover
+{
+    color:green;
+    text-decoration: none;
+    
+}
+
+.dropdown-menu>li>a {
+    padding: 0px 0px !important;
+    line-height: 0.5;
+}
+
+.dropdown-menu>li>a:hover {
+   color : orange;
+}
+
+.dropdown-menu>li {
+  display: block;
+  width: 100%;
 }
 
 .list_input
@@ -34,24 +70,39 @@ div
     padding-top: 3%;
     padding-bottom: 1%;
     padding-left: 30%;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #DD6435;
     
 }
 
-.input_box
+.inputBox
 {
     width:50% !important;
+    margin-top : 20px;
 }
 
-/*#content
+.trashTitle
 {
-  display:none;  
+    color:green;
+    font-size: 20px;
+    text-align: center;
+    padding-top: 20px;
 }
 
-#add
+.date
 {
-  display:  none; 
-}*/
+    padding: 0px;
+}
+
+.title
+{
+    width : 45% !important;
+}
+
+.addButton
+{
+    width: 50% !important;
+    margin-top: 20px;
+}
 
 .note_area {
     resize: none;
@@ -116,6 +167,7 @@ ul li div img {
 	position: absolute; 
 	top: 0;
 }
+
 
 ul li textarea {
 	font-family: 'Chewy', arial, sans-serif;

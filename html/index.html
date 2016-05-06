@@ -3,19 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href = "../css/bootstrap.min.css" rel = "stylesheet">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src = "../js/bootstrap.min.js"></script>
+    <script src = "../js/bootstrap-datetimepicker.min.js"></script>
   <link href="../css/default.css" rel="stylesheet">
+  <link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 </head>
     
-<body>
+<body onload="showNotes()">
    <div class="mainheader">
       <div class="container">
           <div class="row">
             <div class="topnav col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                LIST KEEP
+           <a href="index.html">KEEPNOTE</a>
             </div>
+              <div class="col-lg-6 topright">
+              <a href="trash.html" id="trashLink">Trash(0)</a>
+              </div>
          </div>
     </div>
 </div>
@@ -26,45 +31,48 @@
   <form id="note_form" onsubmit="addNote()">
     <div class="input-group input_box">
       <div class="input-group-btn">
-        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
           Action
+        <span class = "caret"></span>
         </button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Note</a>
-          <a class="dropdown-item" href="#">List</a>
-          <a class="dropdown-item" href="#">Image</a>
-          <div role="separator" class="dropdown-divider"></div>
-        </div>
+      <ul class = "dropdown-menu">
+         <li><a href = "#">notes</a></li>
+         <li><a href = "#">list</a></li>
+         <li><a href = "#">image</a></li>
+      </ul>
       </div>
-      <input type="text" id="title" class="form-control" aria-label="Text input with dropdown button" required placeholder="Add a title">
+      <input type="text" id="title" class="form-control title" required placeholder="Add a title">
     </div>
-            
-<br>
     
-<div class="input-group input-group-lg input_box" id="content">
-    <textarea class="form-control note_area" id="task" placeholder="take a note.." aria-describedby="sizing-addon1" required onkeyup="auto_grow(this)"></textarea>
+<div class="input-group input-group-lg inputBox" id="content">
+    <textarea class="form-control note_area" id="task" placeholder="take a note.." aria-describedby="sizing-addon1" required onkeyup="autoGrow(this)"></textarea>
 </div>
-<br>
       
-<div id="add" >
+        <div class="input-group date form_datetime inputBox" data-date="2016-05-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="dtp_input1" id="reminder">
+            <input class="form-control" size="16" type="text" disabled placeholder="Add reminder" id="reminder">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-remove-sign"></span></span>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        </div>
+        <input type="hidden" id="dtp_input1" value="" />
+
+      
+<div id="add" class="addButton" >
     <input type="submit" class="button" value="Done">
       </div>
-
-     </form>
-              
+     </form>      
        </div>
      </div>
  </div>
     
     <div class="container">
       <div class="row">
-          <div class="col-ld-12">
-        ,<div id="notes"></div>
+          <div class="col-lg-12">
+        ,<div id="notes" class="notes"></div>
        </div>
      </div>
  </div>
  
-<script src="../js/to-do.js"></script>
+<script src="../js/script.js"></script>
 </body>
     
 </html>
