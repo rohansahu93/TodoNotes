@@ -18,8 +18,8 @@
         }
     else{
         break;
+      } 
     }
-   }
   }
 })();
 
@@ -43,18 +43,19 @@ function getTrashNotes() {
     return trashNotes;
 }
 
-//empty the trashed notes
-function emptyTrash(){
-    var trashNotes = getTrashNotes();
-    localStorage.removeItem("trash");
-    showTrashNotes();
-    alert("trash is empty now...!!");
-}
-
-
 //updated the trash length for reflecting in header
 function updateTrashLength(trashNotes){
     document.getElementById('trashLink').innerHTML = "Trash("+trashNotes.length+")"; 
+}
+
+//empty the trashed notes
+function emptyTrash(){
+    var trashNotes = getTrashNotes();
+    trashNotes.splice(0,trashNotes.length);
+    saveTrashState(trashNotes);
+    showTrashNotes();
+    updateTrashLength(trashNotes);
+    alert("trash is empty now...!!");
 }
 
 //object created for new note and trashnote
@@ -84,7 +85,6 @@ function addNote()
 {
     var task = document.getElementById('task').value;
     var title = document.getElementById('title').value;
-    var reminder = document.getElementById('reminder').value;
     var notes = getNotes();
     var noteObject =new note(title ,task , notes.length) ;
     notes.push(noteObject);
@@ -182,12 +182,12 @@ function showNotes() {
     var html = '<ul>';
     for(var i=0; i<notes.length; i++) {
         html += "<li><div class='colour1'>" + 
-					"<form class='updateForm' id='"+notes[i].timestamp+"' onsubmit='updateNote(this.id)'>" +
-            "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+notes[i].title + "' id='"+notes[i].timestamp+"'/>" + 
-					"<textarea class='note-content' placeholder='Your content here' id='"+notes[i].timestamp+"' />"+notes[i].note+"</textarea>" + 
-					"<img src='../images/close.png' onclick='removeNote(this.id)' class='delete' id='" + notes[i].timestamp + "'  />" +
-                   "<input type='submit' class='updated' value='update' id='" + notes[i].timestamp + "'/>" +
-					"</form></div></li>";
+				"<form class='updateForm' id='"+notes[i].timestamp+"' onsubmit='updateNote(this.id)'>" +
+                "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+notes[i].title + "' id='"+notes[i].timestamp+"'/>" + 
+				 "<textarea class='note-content' placeholder='Your content here' id='"+notes[i].timestamp+"' />"+notes[i].note+"</textarea>" + 
+				 "<img src='../images/close.png' onclick='removeNote(this.id)' class='delete' id='" + notes[i].timestamp + "'  />" +
+                 "<input type='submit' class='updated' value='update' id='" + notes[i].timestamp + "'/>" +
+				 "</form></div></li>";
             };
     html += '</ul>';
     document.getElementById('notes').innerHTML = html;
@@ -200,12 +200,12 @@ function showTrashNotes(){
     var html = '<ul>';
     for(var i=0; i<trashNotes.length; i++) {
         html += "<li><div class='colour1'>" + 
-					"<form class='restoreForm' id='"+trashNotes[i].timestamp+"'>" +
-            "<input type='text' class='note-title' placeholder='Untitled' disabled maxlength='10' value='"+trashNotes[i].title + "' id='"+trashNotes[i].timestamp+"'/>" + 
-					"<textarea class='note-content' placeholder='Your content here' disabled id='"+trashNotes[i].timestamp+"' />"+trashNotes[i].note+"</textarea>" + 
-					"<img src='../images/close.png' onclick='deleteTrashNote(this.id)' class='delete' id='" + trashNotes[i].timestamp + "'/>" +
-                   "<input type='button' class='updated' value='restore' onclick='restoreTrashNote(this.id)' id='" + trashNotes[i].timestamp + "'/>" +
-					"</form></div></li>";
+				 "<form class='restoreForm' id='"+trashNotes[i].timestamp+"'>" +
+                 "<input type='text' class='note-title' placeholder='Untitled' disabled maxlength='10' value='"+trashNotes[i].title + "' id='"+trashNotes[i].timestamp+"'/>" + 
+				 "<textarea class='note-content' placeholder='Your content here' disabled id='"+trashNotes[i].timestamp+"' />"+trashNotes[i].note+"</textarea>" + 
+				 "<img src='../images/close.png' onclick='deleteTrashNote(this.id)' class='delete' id='" + trashNotes[i].timestamp + "'/>" +
+                 "<input type='button' class='updated' value='restore' onclick='restoreTrashNote(this.id)' id='" + trashNotes[i].timestamp + "'/>" +
+				 "</form></div></li>";
             };
     html += '</ul>';
     document.getElementById('trashNotes').innerHTML = html;  
@@ -217,8 +217,3 @@ function autoGrow(element) {
     element.style.height = "5px";
     element.style.height = (element.scrollHeight)+"px";
 }
-
-//datetime picker for reminder
-$(".form_datetime").datetimepicker({
-    format: "dd MM yyyy - hh:ii"
-});
