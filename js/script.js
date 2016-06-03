@@ -20,13 +20,13 @@ var toDos ={};
        if(localStorage.getItem('trash')){   
         for(var i=trashNotes.length-1 ; i>=0 ;i--){
             var one_day=1000*60*60*24;
-            var time = new Date(trashNotes[i].timestamp);
+            var time = new Date(trashNotes[i].id);
             var d = new Date();
             var diff = d.getTime() - time.getTime();
             var diff_days = Math.round(diff/one_day);
             if(diff_days >= 7){
               trashNotes.splice(i,1);
-              saveTrashState;
+              saveTrashState();
             }
         else{
         break;
@@ -51,11 +51,17 @@ var toDos ={};
     //object created for new note and trashnote
     function note(title ,task ,toDoType)
         {
+            var d = new Date();
+        var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+          var nd = new Date(utc + (3600000*(+5.5)));
           this.id = new Date();
           this.title = title;
           this.note = task;
           this.type = toDoType;
-          this.timestamp = new Date();
+          this.timestamp = nd.toLocaleString();
+    
+    // create new Date object for different city
+    // using supplied offset
         }
 
     //saving the notes to localstorage after crud operations
@@ -81,10 +87,9 @@ var toDos ={};
             alert("Please fill both the fields....!!");
             return false;
         }
-        //var reminder = document.getElementById('reminder').value;
         var toDoType = "note";
         var noteObject =new note(title ,task , toDoType) ;
-        notes.push(noteObject);
+        notes.unshift(noteObject);
         saveNotesState();
         toDos.showNotes();
         document.getElementById('task').value = "";
@@ -102,8 +107,7 @@ var toDos ={};
             return false;
         }
         var img = document.getElementById('demoImg');
-        var file = document.getElementById('bannerImg').files[0];
-        //var file = document.getElementById('bannerImg').value;             
+        var file = document.getElementById('bannerImg').files[0];            
         var toDoType = "image";
         var fReader = new FileReader();
         fReader.onload = function() {
@@ -111,7 +115,7 @@ var toDos ={};
             document.getElementById('demoImg').src = fReader.result;
             var task  = getBase64Image(img);
             var noteObject =new note(title , task , toDoType)
-            notes.push(noteObject);
+            notes.unshift(noteObject);
             saveNotesState();
             toDos.showNotes();
         };
@@ -122,30 +126,53 @@ var toDos ={};
 
     //update note according to the id generated
     toDos.updateNote = function(id){
+        var d = new Date();
         var title = document.getElementById(id).getElementsByClassName("note-title")[0].value;
-        var note = document.getElementById(id).getElementsByClassName("note-content")[0].value;
-        //var img =  $("#"+id).find(".tableBanner#" + id ).val();
+        var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        var nd = new Date(utc + (3600000*(+5.5)));
         for(var i=0;i<notes.length;i++){
             if(notes[i].id == id){
-                console.log("hello");
-                notes[i].id= new Date();
-                notes[i].note=note;
-                notes[i].title=title;
-                notes[i].timestamp= new Date();
-                break;
+                if(notes[i].type == "note"){
+                    var note = document.getElementById(id).getElementsByClassName("note-content")[0].value;
+                    notes[i].id= new Date();
+                    notes[i].note=note;
+                    notes[i].title=title;
+                    notes[i].timestamp = nd.toLocaleString();
+                    break;
+                    }
+                else if(notes[i].type == "image"){  
+                    var x = notes[i];
+                    var bannerImage = document.getElementById('file-input').value;
+                    var img = document.getElementById(id).getElementsByClassName("noteImage")[0];
+                    var file = document.getElementById('file-input').files[0]; 
+                    var fReader = new FileReader();
+                    fReader.onload = function() {
+                        //console.log(fReader.result);
+                                img.src = fReader.result;
+                                var task  = getBase64Image(img);
+                                x.id= new Date();
+                                x.note=task;
+                                x.title=title;
+                                x.timestamp = nd.toLocaleString();
+                                saveNotesState();
+                                toDos.showNotes();
+                     };
+                    fReader.readAsDataURL(file); 
+                }
             }
         }
+ 
         saveNotesState();
         toDos.showNotes();
         return false;
     }
 
-    //move the note to trash with respect to its timestamp id
+//move the note to trash with respect to its timestamp id
     toDos.removeNote = function(id) {
         for(var i=0; i< notes.length; i++){
           if(notes[i].id == id){
             var trashNoteObject =new note(notes[i].title ,notes[i].note , notes[i].type ) ;
-             trashNotes.push(trashNoteObject);
+             trashNotes.unshift(trashNoteObject);
              localStorage.setItem('trash', JSON.stringify(trashNotes));
              notes.splice(i,1);
              break;
@@ -164,7 +191,7 @@ var toDos ={};
         for(var i=0;i<trashNotes.length;i++){
             if(trashNotes[i].id == id){
             var noteObject =new note(trashNotes[i].title ,trashNotes[i].note , trashNotes[i].type) ;
-             notes.push(noteObject);
+             notes.unshift(noteObject);
              trashNotes.splice(i,1);
              break;
             }
@@ -201,17 +228,17 @@ var toDos ={};
         var html = '<ul>';
         for(var i=0; i<notes.length; i++) {
             html += "<li><div class='colour1'>" + 
-                        "<form class='updateForm' id='"+notes[i].timestamp+"' onsubmit='toDos.updateNote(this.id)'>" +
-                "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+notes[i].title + "' id='"+notes[i].timestamp+"'/>";
+                        "<form class='updateForm' id='"+notes[i].id+"' onsubmit='toDos.updateNote(this.id)'>" +
+                "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+notes[i].title + "' id='"+notes[i].id+"'/>";
                 if(notes[i].type == "image"){
                 var imgSrc = fetchImage(notes[i].note);
-                html+="<input id='file-input' type='file' style='display:none;'/><label for='file-input'><img src="+imgSrc+" width='180' height='200' id='tableBanner' class='noteImage' id='"+notes[i].timestamp+"'/></label>";
+                html+="<input id='file-input' type='file' style='display:none;'/><label for='file-input'><img src="+imgSrc+" width='180' height='200' id='tableBanner' class='noteImage' id='"+notes[i].id+"'/></label>";
                 }
             else if(notes[i].type == "note"){
-               html+="<textarea class='note-content' placeholder='Your content here' id='"+notes[i].timestamp+"' />"+notes[i].note+"</textarea>";
+               html+="<textarea class='note-content' placeholder='Your content here' id='"+notes[i].id+"' />"+notes[i].note+"</textarea>";
             }
             html+="<img src='../images/close.png' onclick='toDos.removeNote(this.parentNode.id)' class='delete'/>" +
-                    "<input type='submit' class='updated' value='update'/>" +
+                    "<h6 class='timestamp'>"+notes[i].timestamp+"</h6><input type='submit' class='updated' value='update'/>" +
                     "</form></div></li>";
                 };
         html += '</ul>';
@@ -223,17 +250,17 @@ var toDos ={};
         var html = '<ul>';
         for(var i=0; i<trashNotes.length; i++) {
             html += "<li><div class='colour1'>" + 
-                        "<form class='updateForm' id='"+trashNotes[i].timestamp+"'>" +
-                "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+trashNotes[i].title + "' id='"+trashNotes[i].timestamp+"'/>";
+                        "<form class='updateForm' id='"+trashNotes[i].id+"'>" +
+                "<input type='text' class='note-title' placeholder='Untitled' maxlength='10' value='"+trashNotes[i].title + "' id='"+trashNotes[i].id+"'/>";
                 if(trashNotes[i].type == "image"){
                   var imgSrc = fetchImage(trashNotes[i].note);
                   html+="<img src="+imgSrc+" id='tableBanner' class='noteImage' class='tableBanner'/>";
                 }
             else if(trashNotes[i].type == "note"){
-                  html+="<textarea class='note-content' placeholder='Your content here' id='"+trashNotes[i].timestamp+"' />"+trashNotes[i].note+"</textarea>";
+                  html+="<textarea class='note-content' placeholder='Your content here' id='"+trashNotes[i].id+"' />"+trashNotes[i].note+"</textarea>";
             }
-            html+="<img src='../images/close.png' onclick='toDos.deleteTrashNote(this.id)' class='delete' id='" + trashNotes[i].timestamp + "'/>" +
-                       "<input type='button' class='updated' value='restore' onclick='toDos.restoreTrashNote(this.id)' id='" + trashNotes[i].timestamp + "'/>" +
+            html+="<img src='../images/close.png' onclick='toDos.deleteTrashNote(this.id)' class='delete' id='" + trashNotes[i].id + "'/>" +
+                       "<h6 class='timestamp'>"+trashNotes[i].timestamp+"</h6><input type='button' class='updated' value='restore' onclick='toDos.restoreTrashNote(this.id)' id='" + trashNotes[i].id + "'/>" +
                         "</form></div></li>";
                 };
         html += '</ul>';
@@ -243,8 +270,8 @@ var toDos ={};
     //convert thr image data into binary
     function getBase64Image(img) {
         var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL("image/png");
@@ -277,6 +304,7 @@ var toDos ={};
         $('#toDoMain').append('<div id="add" class="addButton" ><input type="submit" class="button" onclick="toDos.addImageNote()" value="Done"></div>');
         $("#content").remove();
     });
+    
 })();
 
 var elements = document.getElementsByTagName('body');
